@@ -1,23 +1,34 @@
 local Library = loadstring(game:HttpGetAsync("https://github.com/ActualMasterOogway/Fluent-Renewed/releases/latest/download/Fluent.luau"))()
-local SaveManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau"))()
-local InterfaceManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau"))()
- 
+
 local Window2 = Library:CreateWindow{
-    Title = `Key System Polis Hub`,
+    Title = "Key System Polis Hub",
     SubTitle = "",
     TabWidth = 160,
     Size = UDim2.fromOffset(830, 525),
-    Resize = true, -- Resize this ^ Size according to a 1920x1080 screen, good for mobile users but may look weird on some devices
+    Resize = true,
     MinSize = Vector2.new(470, 380),
-    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Acrylic = true,
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.RightControl -- Used when theres no MinimizeKeybind
+    MinimizeKey = Enum.KeyCode.RightControl
 }
 
-_G.Key = "7#mQ9@zL!2pXv$5&dK*8wRnY4^cTj6%hGf1aSb3eIoP0uAlOqVxZyDkHrCtJgMlNwB" or "a7Bz!9XpL2@qW8sRn4#tYv6%uIo3$eKd5^gHj1&mCf0"
-_G.KeyInput = "string"
+_G.Key = "7#mQ9@zL!2pXv$5&d#KMSadm#Kas898982>>KhKxX128"
+_G.KeyInput = ""
 
--- Fluent Renewed provides ALL 1544 Lucide 0.469.0 https://lucide.dev/icons/ Icons and ALL 9072 Phosphor 2.1.0 https://phosphoricons.com/ Icons for the tabs, icons are optional
+local function SaveKey(key)
+    writefile("KeySystemSave.txt", key)
+end
+
+local function LoadKey()
+    if isfile("KeySystemSave.txt") then
+        return readfile("KeySystemSave.txt")
+    else
+        return ""
+    end
+end
+
+_G.KeyInput = LoadKey()
+
 local Tabs = {
     Main = Window2:CreateTab{
         Title = "Key System",
@@ -30,44 +41,43 @@ local Tabs = {
 }
 
 function MakeScriptHub()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Polar123321/polis/refs/heads/main/polis123"))()
+    if game.PlaceId == 7465136166 then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Polar123321/polis/refs/heads/main/PolisHub2Sea"))()
+    elseif game.PlaceId == 3978370137 then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Polar123321/polis/refs/heads/main/PolisHub1Sea"))()
+    else
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Polar123321/polis/refs/heads/main/PolisHub1Sea"))()
+    end
 end
-
 
 function CorrectKey()
-    
-Library:Notify{
-    Title = "Key System",
-    Content = "Correct Key! the script will be loaded.",
-    Duration = 8
-}
+    Library:Notify{
+        Title = "Key System",
+        Content = "Correct Key! The script will be loaded.",
+        Duration = 8
+    }
+    Window2:Destroy()
 end
 
-function incorrectkey()
-    
-Library:Notify{
-    Title = "Key System",
-    Content = "Incorrect Key",
-    Duration = 8
-}
+function IncorrectKey()
+    Library:Notify{
+        Title = "Key System",
+        Content = "Incorrect Key",
+        Duration = 8
+    }
 end
-
-local Options = Library.Options
 
 local Input = Tabs.Main:CreateInput("Input", {
     Title = "Key System",
-    Default = "",
-    Placeholder = "Placeholder",
-    Numeric = false, -- Only allows numbers
-    Finished = false, -- Only calls callback when you press enter
+    Default = _G.KeyInput,
+    Placeholder = "Enter your key",
+    Numeric = false,
+    Finished = false,
     Callback = function(Value)
         _G.KeyInput = Value
+        SaveKey(Value)
     end
 })
-
-Input:OnChanged(function()
-    
-end)
 
 local Button = Tabs.Main:CreateButton{
     Title = "Check Key",
@@ -77,38 +87,14 @@ local Button = Tabs.Main:CreateButton{
             MakeScriptHub()
             CorrectKey()
         else
-            incorrectkey()
+            IncorrectKey()
         end
     end
 }
 
--- Addons:
--- SaveManager (Allows you to have a configuration system)
--- InterfaceManager (Allows you to have a interface managment system)
-
--- Hand the library over to our managers
-SaveManager:SetLibrary(Library)
-InterfaceManager:SetLibrary(Library)
-
--- Ignore keys that are used by ThemeManager.
--- (we dont want configs to save themes, do we?)
-SaveManager:IgnoreThemeSettings()
-
--- You can add indexes of elements the save manager should ignore
-SaveManager:SetIgnoreIndexes{}
-
--- use case for doing it this way:
--- a script hub could have themes in a global folder
--- and game configs in a separate folder per game
-InterfaceManager:SetFolder("FluentScriptHub")
-SaveManager:SetFolder("FluentScriptHub/specific-game")
-
-InterfaceManager:BuildInterfaceSection(Tabs.Settings)
-SaveManager:BuildConfigSection(Tabs.Settings)
-
+if _G.KeyInput == _G.Key then
+    MakeScriptHub()
+    CorrectKey()
+end
 
 Window2:SelectTab(1)
-
--- You can use the SaveManager:LoadAutoloadConfig() to load a config
--- which has been marked to be one that auto loads!
-SaveManager:LoadAutoloadConfig()
